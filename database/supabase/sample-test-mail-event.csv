@@ -1,0 +1,8 @@
+id,created_at,email_message_id,subject,sender,recipient,email_body,risk_score,verdict,recommended_action,reasons,url_assessments,attachment_assessments,action_taken
+1,2026-09-12 11:56:07.67+00,1a09551c073e3119,Security phishing mail check,parthchaudhari974@gmail.com,parthchaudhari973@gmail.com," Hello,
+
+This is a phishing detection automation test.
+
+Visit:
+https://example.com
+https://www.google.com",10,CLEAN,ALLOW,"[""The email explicitly states it is a 'phishing detection automation test', indicating non-malicious intent."", ""All URLs in the email (example.com, google.com) are well-known, safe domains with zero malicious detections on VirusTotal."", ""The sender and recipient addresses are highly similar, suggesting a controlled test environment or developer testing."", ""No deceptive content, credential harvesting, or urgent calls to action are present.""]","[""https://example.com: CLEAN (0/90 detections)"", ""https://www.google.com: CLEAN (0/90 detections)""]","[""No attachments were included in the email metadata. Provided file analysis results for background files showed 0 detections.""]",ALLOWED

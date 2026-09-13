@@ -1,0 +1,191 @@
+id,created_at,email_message_id,subject,sender,recipient,email_body,risk_score,verdict,recommended_action,reasons,url_assessments,attachment_assessments,action_taken
+1,2026-09-12 11:56:07.67+00,1a09551c073e3119,Security phishing mail check,parthchaudhari974@gmail.com,parthchaudhari973@gmail.com," Hello,
+
+This is a phishing detection automation test.
+
+Visit:
+https://example.com
+https://www.google.com",10,CLEAN,ALLOW,"[""The email explicitly states it is a 'phishing detection automation test', indicating non-malicious intent."",""All URLs in the email (example.com, google.com) are well-known, safe domains with zero malicious detections on VirusTotal."",""The sender and recipient addresses are highly similar, suggesting a controlled test environment or developer testing."",""No deceptive content, credential harvesting, or urgent calls to action are present.""]","[""https://example.com: CLEAN (0/90 detections)"",""https://www.google.com: CLEAN (0/90 detections)""]","[""No attachments were included in the email metadata. Provided file analysis results for background files showed 0 detections.""]",ALLOWED
+6,2026-09-12 16:22:55.441+00,1a0965abdf568541,Urgent: Your Account Requires Verification,parthchaudhari974@gmail.com,parthchaudhari973@gmail.com,"Hello,
+
+We detected unusual activity on your account.
+
+To prevent your account from being temporarily suspended, you must verify
+your account immediately.
+
+Please review and confirm your account information using the link below:
+
+https://example.com/account-verification
+
+Failure to complete this verification may result in restricted access to
+your account.
+
+Regards,
+Account Security Team",80,SUSPICIOUS,ALERT,"[""The sender address (parthchaudhari974@gmail.com) is a personal Gmail account, which is not consistent with a legitimate 'Account Security Team'."",""The email uses social engineering tactics, including urgent and threatening language regarding account suspension, to pressure the recipient."",""The request to click a link for account verification following a claim of unusual activity is a classic phishing indicator."",""Generic greeting ('Hello') and lack of specific account details are common in bulk phishing attempts.""]","[""https://example.com/account-verification: VirusTotal analysis shows 0 detections (scan status: queued).""]",[],ALERTED_AND_TICKET_CREATED
+7,2026-09-12 17:52:22.722+00,1a096be1bdbc9abd,Urgent: Microsoft Account Security Verification Required,parthchaudhari974@gmail.com,parthchaudhari973@gmail.com,"Hello,
+
+Microsoft Security has detected unusual activity associated with your
+account.
+
+To prevent your account from being restricted, you must verify your account
+immediately.
+
+Please review your account security information using the link below:
+
+https://example.com/microsoft-security-verification
+
+Failure to complete verification may result in temporary account
+restrictions.
+
+Regards,
+Microsoft Account Security Team",70,SUSPICIOUS,ALERT,"[""The sender's email address (gmail.com) is inconsistent with the claimed identity of the 'Microsoft Account Security Team'."",""The email employs social-engineering tactics, including a false sense of urgency and threats of account restriction to induce user action."",""The link provided for security verification (example.com) is not an official Microsoft domain."",""The use of a generic greeting ('Hello') is common in bulk phishing campaigns."",""While VirusTotal does not flag the URL as malicious, the surrounding email context is highly indicative of a phishing attempt.""]","[""https://example.com/microsoft-security-verification: 0/90 detections on VirusTotal; however, the domain is not associated with the purported sender (Microsoft).""]",[],ALERTED_AND_TICKET_CREATED
+8,2026-09-12 19:03:16.871+00,1a096c3670f09037,Project Documentation Update,parthchaudhari974@gmail.com,parthchaudhari973@gmail.com,"Hello,
+
+Please find the latest project documentation attached for review.
+
+There are no urgent actions required. Please review it when convenient.
+
+Regards,
+Parth",45,SUSPICIOUS,ALERT,"[""The sender and recipient email addresses are nearly identical (parthchaudhari974 vs parthchaudhari973), which is a common indicator of phishing tests or typosquatting."",""The email uses a generic greeting ('Hello') instead of a specific name."",""The use of a public Gmail provider for sharing 'project documentation' is atypical for professional environments."",""The attachment analysis is currently queued in VirusTotal, meaning its safety cannot be definitively confirmed at this time.""]",[],"[""File (SHA256: 2feeeb76362ce67fc36c15c3027c1b3e824083e8fe68ec84d1fc60b28a6750d3) is queued for analysis on VirusTotal with no current detections.""]",ALERTED_AND_TICKET_CREATED
+9,2026-09-12 19:18:07.786+00,1a096c3670f09037,Project Documentation Update,parthchaudhari974@gmail.com,parthchaudhari973@gmail.com,"Hello,
+
+Please find the latest project documentation attached for review.
+
+There are no urgent actions required. Please review it when convenient.
+
+Regards,
+Parth",40,SUSPICIOUS,ALERT,"[""The sender (parthchaudhari974@gmail.com) and recipient (parthchaudhari973@gmail.com) email addresses are nearly identical, which is a common indicator of typo-squatting or social engineering."",""The email uses personal Gmail accounts to transmit what is described as 'project documentation,' which is atypical for professional communication."",""There is a discrepancy between the email body text ('project documentation') and the filename identified in the threat intelligence ('Resume Edit.pdf')."",""While the email displays suspicious social engineering characteristics, the attachment itself was found to be clean by VirusTotal.""]",[],"[""The attachment 'Resume Edit.pdf' (SHA256: 2feeeb76362ce67fc36c15c3027c1b3e824083e8fe68ec84d1fc60b28a6750d3) was scanned by 56 antivirus engines and DOCGuard sandbox, with all results returning as clean or harmless.""]",ALERTED_AND_TICKET_CREATED
+10,2026-09-12 19:23:06.973+00,1a096c3670f09037,Project Documentation Update,parthchaudhari974@gmail.com,parthchaudhari973@gmail.com,"Hello,
+
+Please find the latest project documentation attached for review.
+
+There are no urgent actions required. Please review it when convenient.
+
+Regards,
+Parth",5,CLEAN,ALLOW,"[""VirusTotal analysis of the attachment 'Resume Edit.pdf' shows no malicious detections (0/63)."",""The email body does not contain any malicious URLs or suspicious links."",""Although the sender and recipient addresses are very similar, the lack of malicious content suggests a personal file transfer rather than a phishing attempt."",""The email does not use urgent or threatening language to coerce the recipient.""]",[],"[""Resume Edit.pdf (SHA256: 2feeeb76362ce67fc36c15c3027c1b3e824083e8fe68ec84d1fc60b28a6750d3) - Clean. VirusTotal reported 0 malicious detections out of 63 engines. Analysis shows a standard PDF document with no embedded scripts or malicious objects.""]",ALLOWED
+11,2026-09-12 19:46:51.55+00,1a09727d50801353,Urgent Security Test - Malware Detection,parthchaudhari974@gmail.com,parthchaudhari973@gmail.com,"Hello,
+
+This is an authorized security testing email for the Automated Phishing
+Detection Workflow.
+
+Please process the attached security test link.
+https://www.amtso.org/check-desktop-phishing-page/
+
+Regards,
+Security Testing",50,SUSPICIOUS,ALERT,"[""The email uses urgent language ('Urgent Security Test') to create a sense of pressure."",""The sender address is a personal Gmail account, which is suspicious for a message claiming to be an 'authorized security test'."",""The email provides direct instructions to click a link, a common phishing tactic."",""While the link (AMTSO) is a legitimate security industry testing tool, the delivery method mimics social engineering patterns.""]","[""https://www.amtso.org/check-desktop-phishing-page/: VirusTotal analysis status is queued with 0 detections. This URL is a known industry standard for testing anti-phishing software.""]",[],ALERTED_AND_TICKET_CREATED
+12,2026-09-12 19:54:32.119+00,1a0972ee94a5768f,Urgent Security Test - Malware Detection,parthchaudhari974@gmail.com,parthchaudhari973@gmail.com,"Hello,
+
+This is an authorized security testing email for the Automated
+Phishing Detection Workflow.
+
+Please process the attached security test link.
+https://www.amtso.org/check-desktop-phishing-page/
+
+Regards,
+Security Testing
+
+
+
+X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*",45,SUSPICIOUS,ALERT,"[""The email uses urgent language in the subject line to create a sense of pressure."",""The body of the email contains the EICAR standard antivirus test string, which is intended to trigger security software detections."",""The sender is a generic Gmail account, which is suspicious for an 'authorized security testing' communication."",""The included URL points to a legitimate testing page by the Anti-Malware Testing Standards Organization (AMTSO), but the unsolicited delivery and generic sender address are characteristic of phishing simulations or social engineering attempts.""]","[""The URL https://www.amtso.org/check-desktop-phishing-page/ has 0 malicious detections on VirusTotal and is associated with a legitimate security testing organization.""]",[],ALERTED_AND_TICKET_CREATED
+13,2026-09-13 07:16:53.235+00,1a0999eb7a692b55,Urgent: Account Security Verification Required,parthchaudhari974@gmail.com,parthchaudhari973@gmail.com,"Hello,
+
+We detected unusual activity associated with your account.
+
+To prevent temporary restrictions, please complete the required security
+verification.
+
+Verify Now [http://192.168.1.5?rid=hFsd1eB]
+
+Please complete the verification as soon as possible.
+
+Regards,
+Account Security Team
+
+Authorized cybersecurity awareness laboratory.
+
+[http://192.168.1.5/track?rid=hFsd1eB]",85,SUSPICIOUS,ALERT,"[""The sender uses a personal Gmail address (@gmail.com) while claiming to be the 'Account Security Team', which is a major red flag for impersonation."",""The email employs strong social-engineering tactics, including a sense of urgency and the threat of temporary account restrictions."",""The embedded links point to a private IP address (192.168.1.5), which is not typical for a legitimate public-facing security verification service."",""VirusTotal scan results returned no detections (0/90), but the crawler noted the target was 'unreachable' due to it being a private IP address.""]","[""http://192.168.1.5?rid=hFsd1eB - VirusTotal: 0 malicious detections; identified as a private IP address."",""http://192.168.1.5/track?rid=hFsd1eB - VirusTotal: 0 malicious detections; identified as a private IP address.""]",[],ALERTED_AND_TICKET_CREATED
+14,2026-09-13 09:42:10.56+00,1a0999eb7a692b55,Urgent: Account Security Verification Required,parthchaudhari974@gmail.com,parthchaudhari973@gmail.com,"Hello,
+
+We detected unusual activity associated with your account.
+
+To prevent temporary restrictions, please complete the required security
+verification.
+
+Verify Now [http://192.168.1.5?rid=hFsd1eB]
+
+Please complete the verification as soon as possible.
+
+Regards,
+Account Security Team
+
+Authorized cybersecurity awareness laboratory.
+
+[http://192.168.1.5/track?rid=hFsd1eB]",70,SUSPICIOUS,ALERT,"[""The sender uses a generic Gmail address to represent an official 'Account Security Team', which is a major red flag for phishing."",""The email employs social engineering tactics, including high urgency and threats of account restriction, to pressure the recipient."",""The embedded links point to a private IP address (192.168.1.5), which is highly unusual for legitimate service providers."",""The email contains a generic greeting and a signature referencing a 'cybersecurity awareness laboratory', suggesting it is likely a phishing simulation or a targeted social engineering attempt.""]","[""http://192.168.1.5?rid=hFsd1eB: VirusTotal found no malicious detections (0/0), but the use of a private IP address is highly suspicious in this context."",""http://192.168.1.5/track?rid=hFsd1eB: VirusTotal found no malicious detections (0/0), but the use of a private IP address is highly suspicious in this context.""]",[],ALERTED_AND_TICKET_CREATED
+15,2026-09-13 10:17:57.13+00,1a09a433bbf7b6f1,[SECURITY LAB] Malicious Email Simulation,parthchaudhari974@gmail.com,parthchaudhari973@gmail.com,"Hello,
+
+This is an authorized cybersecurity laboratory test.
+
+A simulated security threat has been detected in this message.
+This email is intentionally designed to test the automated
+phishing detection and quarantine workflow.
+
+No real malware is included.
+
+Security Lab Test ID: MALICIOUS-SIMULATION-001
+
+The attachment included with this email is completely harmless
+and exists only for security-workflow testing.
+
+Regards,
+Security Lab",5,CLEAN,ALLOW,"[""The email is explicitly identified as an authorized cybersecurity simulation (Security Lab Test ID: MALICIOUS-SIMULATION-001)."",""VirusTotal analysis of the attached file 'malicious_simulation.txt' shows zero detections across 61 security vendors."",""No malicious URLs or phishing infrastructure were identified in the email body."",""The suspicious indicators, such as the generic sender and urgent simulation-themed wording, are intentional artifacts of the security lab test and do not represent a real-world threat.""]",[],"[""malicious_simulation.txt: 0/61 engines detected no malicious activity (Clean)""]",ALLOWED
+16,2026-09-13 11:03:48.062+00,1a09a6e2e1ca4b0f,[SECURITY LAB] Malicious Email Simulation,parthchaudhari974@gmail.com,parthchaudhari973@gmail.com,"Hello,
+
+This is an authorized cybersecurity laboratory test.
+
+A simulated security threat has been detected in this message.
+This email is intentionally designed to test the automated
+phishing detection and quarantine workflow.
+
+No real malware is included.
+
+Security Lab Test ID: MALICIOUS-SIMULATION-001
+
+The attachment included with this email is completely harmless
+and exists only for security-workflow testing.
+
+Regards,
+Security Lab",65,SUSPICIOUS,ALERT,"[""The email content explicitly identifies itself as a 'Malicious Email Simulation' for security testing."",""The body employs social engineering tactics by claiming the attached file is 'completely harmless' to encourage user interaction."",""VirusTotal analysis of the attachment 'malicious_simulation.txt' resulted in 0 malicious detections."",""No malicious URLs were identified in the email body."",""The presence of social engineering indicators in the context of a simulation warrants a suspicious classification for monitoring purposes.""]",[],"[""malicious_simulation.txt (f252c4a57d53d649ec32d5e8846dfec51c6fc913de6b2c65f9606b4d6d9906f0): VirusTotal reported 0 malicious detections from 61 engines.""]",ALERTED_AND_TICKET_CREATED
+17,2026-09-13 11:21:50.091+00,1a09a7e072f1a1a6,[SECURITY LAB] Malicious Email Simulation,parthchaudhari974@gmail.com,parthchaudhari973@gmail.com,"Hello,
+
+This is an authorized cybersecurity laboratory test.
+
+A simulated security threat has been detected in this message.
+This email is intentionally designed to test the automated
+phishing detection and quarantine workflow.
+
+No real malware is included.
+
+Security Lab Test ID: MALICIOUS-SIMULATION-001
+
+The attachment included with this email is completely harmless
+and exists only for security-workflow testing.
+
+Regards,
+Security Lab",50,SUSPICIOUS,ALERT,"[""The email is explicitly identified as an authorized cybersecurity laboratory test simulation (ID: MALICIOUS-SIMULATION-001)."",""The email content is intentionally designed to mimic phishing indicators to test detection workflows."",""VirusTotal analysis of the attachment 'malicious_simulation.txt' shows no malicious detections."",""The message contains social-engineering indicators such as a claim of an attached threat for testing purposes.""]",[],"[""malicious_simulation.txt: Undetected (0 malicious detections across 61 engines)""]",ALERTED_AND_TICKET_CREATED
+18,2026-09-13 11:25:17.324+00,1a09a7e072f1a1a6,[SECURITY LAB] Malicious Email Simulation,parthchaudhari974@gmail.com,parthchaudhari973@gmail.com,"Hello,
+
+This is an authorized cybersecurity laboratory test.
+
+A simulated security threat has been detected in this message.
+This email is intentionally designed to test the automated
+phishing detection and quarantine workflow.
+
+No real malware is included.
+
+Security Lab Test ID: MALICIOUS-SIMULATION-001
+
+The attachment included with this email is completely harmless
+and exists only for security-workflow testing.
+
+Regards,
+Security Lab",100,MALICIOUS,QUARANTINE,"[""The email contains the exact security-lab marker: MALICIOUS-SIMULATION-001, which identifies this as a controlled laboratory test for phishing detection workflows."",""According to the demonstration risk-scoring rules, the presence of this specific marker requires a risk score of 100 and a MALICIOUS verdict."",""The email body explicitly states it is an authorized cybersecurity laboratory test designed to evaluate automated detection systems.""]",[],"[""The attachment 'malicious_simulation.txt' (SHA256: f252c4a57d53d649ec32d5e8846dfec51c6fc913de6b2c65f9606b4d6d9906f0) was analyzed by VirusTotal and returned 0 malicious detections out of 61 engines.""]",QUARANTINED
