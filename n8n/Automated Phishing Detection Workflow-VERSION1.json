@@ -1,0 +1,1282 @@
+{
+  "name": "Automated Phishing Detection Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.microsoftOutlookTrigger",
+      "typeVersion": 1,
+      "position": [
+        -64,
+        224
+      ],
+      "id": "03e9907b-dce2-4916-af6a-8f29c022f770",
+      "name": "Microsoft Outlook Trigger",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "PcyozgcVx014QQo2",
+          "name": "Microsoft Outlook account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "maxResults": 1,
+        "filters": {},
+        "options": {
+          "dataPropertyAttachmentsPrefixName": "attachment_",
+          "downloadAttachments": true
+        }
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -64,
+        -16
+      ],
+      "id": "31030d28-2625-44dd-8de9-379bb3dcbda8",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "0rvNSU9uoCudNpPq",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "25a70fec-0551-4cea-933d-07219ffad21e",
+              "name": "id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "ca653d45-82aa-4575-abf4-89febdedd281",
+              "name": "From",
+              "value": "={{ $json.from.value[0].address }}",
+              "type": "string"
+            },
+            {
+              "id": "ea8be02d-1585-45aa-bb51-6e23f98a906d",
+              "name": "To",
+              "value": "={{ $json.to.value[0].address }}",
+              "type": "string"
+            },
+            {
+              "id": "6ced92ce-c841-498f-a6cd-67c9e71cf975",
+              "name": "Subject",
+              "value": "={{ $json.subject }}",
+              "type": "string"
+            },
+            {
+              "id": "1a9af1d1-9c83-4e49-a427-4e361bf123d4",
+              "name": "snippet",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        160,
+        80
+      ],
+      "id": "aaefbe8e-d223-4055-8ce3-8a801e2c7da8",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "messageId": "={{ $json.id }}",
+        "simple": false,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        384,
+        80
+      ],
+      "id": "250b6f2f-2c80-4cee-af8f-2bc5dd3f77c4",
+      "name": "Get a message",
+      "webhookId": "d5bd0d5f-8f88-4875-ac67-6fe5c0a00ff1",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "0rvNSU9uoCudNpPq",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are the email content extraction agent for a cybersecurity\nphishing detection pipeline.\n\nAnalyze the incoming email and extract all security-relevant\ninformation.\n\nReturn ONLY valid JSON:\n\n{\n  \"subject\": \"...\",\n  \"sender\": \"...\",\n  \"recipient\": \"...\",\n  \"body\": \"...\",\n  \"urls\": [],\n  \"attachment_names\": [],\n  \"suspicious_indicators\": []\n}\n\nExtraction requirements:\n\n1. Extract the exact email subject.\n2. Extract the sender's email address only.\n3. Extract the recipient's email address only.\n4. Extract the complete email body.\n5. Extract EVERY URL appearing anywhere in the email body.\n6. Extract the names of all email attachments.\n7. List security-relevant or suspicious indicators found in the email.\n8. Do not invent, modify, or guess information.\n9. If a field is unavailable, return an empty string or empty array as appropriate.\n10. Return ONLY the JSON object. Do not add explanations, markdown, or extra text.\n\nEmail subject:\n{{ $json.subject }}\n\nSender:\n{{ $json.from.value[0].address }}\n\nRecipient:\n{{ $json.to.value[0].address }}\n\nEmail body:\n{{ $json.text }}",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        608,
+        80
+      ],
+      "id": "d02a8261-7cc8-4fbc-8d61-ae651d8d0c01",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"subject\": \"string\",\n  \"sender\": \"string\",\n  \"recipient\": \"string\",\n  \"body\": \"string\",\n  \"urls\": [\"string\"],\n  \"attachment_names\": [\"string\"],\n  \"suspicious_indicators\": [\"string\"]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        744,
+        296
+      ],
+      "id": "057d75b0-ad0d-4c2d-8992-d4b6beb6b411",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "52d4e9f6-e7a9-47e1-8073-0e116f96ba00",
+              "leftValue": "={{ Object.keys($binary || {}).length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        384,
+        -224
+      ],
+      "id": "7e258a5c-a39f-4241-8f43-6727a65346a4",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "$binary",
+        "include": "allOtherFields",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        672,
+        -224
+      ],
+      "id": "8d1b219c-6a22-4d50-a1a4-b787f6b1de99",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "curlImport": "",
+        "httpVariantWarning": "",
+        "method": "POST",
+        "url": "https://www.virustotal.com/api/v3/files",
+        "": "",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "virusTotalApi",
+        "provideSslCertificates": false,
+        "sendQuery": false,
+        "sendHeaders": false,
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "={{ Object.keys($binary)[0] }}"
+            }
+          ]
+        },
+        "options": {},
+        "infoMessage": ""
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        960,
+        -224
+      ],
+      "id": "23273ebf-1d8e-468d-b4ab-021fd36a9dfe",
+      "name": "VirusTotal HTTP Request",
+      "extendsCredential": "virusTotalApi",
+      "credentials": {
+        "virusTotalApi": {
+          "id": "i7OjaS9qygIFrVaq",
+          "name": "VirusTotal account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://www.virustotal.com/api/v3/analyses/{{ $json.data.id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Apikey",
+              "value": "3fc52788771fc2ab8ee3bb3910570f754714001202731ab1fdcc59599cf8dfc9"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        1408,
+        -224
+      ],
+      "id": "ea03f161-b183-44f0-8a7e-d2d363e2b7f5",
+      "name": "VirusTotal — File Analysis Result"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "output.urls",
+        "include": "allOtherFields",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        960,
+        128
+      ],
+      "id": "aa8346a4-25dd-4fe9-86bd-29abf4bc7312",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://www.virustotal.com/api/v3/urls",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Apikey",
+              "value": "3fc52788771fc2ab8ee3bb3910570f754714001202731ab1fdcc59599cf8dfc9"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "=url",
+              "value": "={{ $json[\"output.urls\"] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        1184,
+        128
+      ],
+      "id": "31bb55bc-3bcd-4b34-9fd3-a57a0396a26c",
+      "name": "VirusTotal — URL Reputation"
+    },
+    {
+      "parameters": {
+        "url": "=https://www.virustotal.com/api/v3/analyses/{{ $json[\"data\"][\"id\"] }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Apikey",
+              "value": "3fc52788771fc2ab8ee3bb3910570f754714001202731ab1fdcc59599cf8dfc9"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        1408,
+        128
+      ],
+      "id": "53d6775c-c735-4e0e-810b-4434b53b97e3",
+      "name": "VirusTotal — URL Analysis Result"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "url_analysis_results",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1632,
+        128
+      ],
+      "id": "71b9ed50-c804-4ced-9da0-761a2e7c0607",
+      "name": "Aggregate URL Results"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "file_analysis_results",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1632,
+        -224
+      ],
+      "id": "a0f7c9b5-8d98-48e2-b34b-4a6171dbd9aa",
+      "name": "VirusTotal — File Analysis Result1"
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1184,
+        -224
+      ],
+      "id": "7137c7ea-8675-41ed-a16f-82335c61ad8d",
+      "name": "Wait",
+      "webhookId": "840cd6c7-fafe-4a4a-a33e-bff0b8a8f267"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1856,
+        -224
+      ],
+      "id": "57d75a37-b6c0-45b5-969c-4abbf6e67862",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2080,
+        -96
+      ],
+      "id": "05d20675-eb8e-41ac-9a27-d18446528441",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are the SOC Analyst AI for an automated phishing email detection and response pipeline.\n\nAnalyze the complete email context and the VirusTotal threat intelligence results provided below.\n\nYour responsibilities:\n\n1. Analyze the email subject, sender, recipient, and body.\n2. Identify phishing and social-engineering indicators.\n3. Evaluate every URL using the VirusTotal URL analysis results.\n4. Evaluate every attachment using the VirusTotal file analysis results.\n5. Consider sender reputation, suspicious wording, malicious links, suspicious attachments, and VirusTotal detections.\n6. Determine an overall risk score from 0 to 100.\n7. Classify the email into exactly one verdict:\n   - MALICIOUS\n   - SUSPICIOUS\n   - CLEAN\n8. Recommend the appropriate response action:\n   - QUARANTINE\n   - ALERT\n   - ALLOW\n9. Provide concise reasons supporting the verdict.\n10. Do not invent threat intelligence findings. Base the assessment only on the provided email and scan results.\n\nRisk guidance:\n- MALICIOUS: clear evidence of malicious content, malicious URLs, malicious attachments, or strong phishing indicators.\n- SUSPICIOUS: concerning indicators exist but there is insufficient evidence to classify as malicious.\n- CLEAN: no meaningful malicious or suspicious indicators are identified.\n\nReturn ONLY valid JSON in this exact structure:\n\n{\n  \"risk_score\": 0,\n  \"verdict\": \"CLEAN\",\n  \"recommended_action\": \"ALLOW\",\n  \"reasons\": [],\n  \"url_assessment\": [],\n  \"attachment_assessment\": []\n}\n\nEMAIL AND THREAT INTELLIGENCE DATA:\n\n{{ JSON.stringify($json) }}",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        2304,
+        -96
+      ],
+      "id": "a1ecfd3e-a13a-441c-b7c1-ce1109ff5fb9",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"risk_score\": {\n      \"type\": \"number\"\n    },\n    \"verdict\": {\n      \"type\": \"string\",\n      \"enum\": [\"MALICIOUS\", \"SUSPICIOUS\", \"CLEAN\"]\n    },\n    \"recommended_action\": {\n      \"type\": \"string\",\n      \"enum\": [\"QUARANTINE\", \"ALERT\", \"ALLOW\"]\n    },\n    \"reasons\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    },\n    \"url_assessment\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    },\n    \"attachment_assessment\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    }\n  },\n  \"required\": [\n    \"risk_score\",\n    \"verdict\",\n    \"recommended_action\",\n    \"reasons\",\n    \"url_assessment\",\n    \"attachment_assessment\"\n  ]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        2440,
+        136
+      ],
+      "id": "8e31e7c7-3978-480d-a2b7-2213f58b5c34",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        616,
+        296
+      ],
+      "id": "7fd2d902-eac1-4261-970c-51d516017453",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": null,
+          "name": "",
+          "__aiGatewayManaged": true
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        2312,
+        136
+      ],
+      "id": "8a4cc4a8-148b-40e3-82a8-65be558b5de1",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": null,
+          "name": "",
+          "__aiGatewayManaged": true
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.output.verdict }}",
+                    "rightValue": "MALICIOUS",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "b2982922-63b5-40b8-9137-b184d879f0d3"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "MALICIOUS"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "70f4fc62-69c6-475d-a1a0-6fd32493abcb",
+                    "leftValue": "={{ $json.output.verdict }}",
+                    "rightValue": "SUSPICIOUS",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "SUSPICIOUS"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "86cab881-77c7-4bfb-8c8f-e955c182c7da",
+                    "leftValue": "={{ $json.output.verdict }}",
+                    "rightValue": "CLEAN",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "CLEAN"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        2656,
+        -112
+      ],
+      "id": "40b24c33-8fb8-401a-9de6-fac77de68d72",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "tableId": "security_events",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "email_message_id",
+              "fieldValue": "={{ $('Gmail Trigger').item.json.id }}"
+            },
+            {
+              "fieldId": "created_at",
+              "fieldValue": "={{ $now.toISO() }}"
+            },
+            {
+              "fieldId": "subject",
+              "fieldValue": "={{ $('Merge1').item.json.output.subject }}"
+            },
+            {
+              "fieldId": "sender",
+              "fieldValue": "={{ $('Merge1').item.json.output.sender }}"
+            },
+            {
+              "fieldId": "recipient",
+              "fieldValue": "={{ $('Merge1').item.json.output.recipient }}"
+            },
+            {
+              "fieldId": "email_body",
+              "fieldValue": "={{ $('Merge1').item.json.output.body }}"
+            },
+            {
+              "fieldId": "risk_score",
+              "fieldValue": "={{ $('AI Agent1').item.json.output.risk_score }}"
+            },
+            {
+              "fieldId": "verdict",
+              "fieldValue": "={{ $('AI Agent1').item.json.output.verdict }}"
+            },
+            {
+              "fieldId": "recommended_action",
+              "fieldValue": "={{ $('AI Agent1').item.json.output.recommended_action }}"
+            },
+            {
+              "fieldId": "reasons",
+              "fieldValue": "={{ $('AI Agent1').item.json.output.reasons }}"
+            },
+            {
+              "fieldId": "url_assessments",
+              "fieldValue": "={{ $('AI Agent1').item.json.output.url_assessment }}"
+            },
+            {
+              "fieldId": "attachment_assessments",
+              "fieldValue": "={{ $('AI Agent1').item.json.output.attachment_assessment }}"
+            },
+            {
+              "fieldId": "action_taken",
+              "fieldValue": "ALLOWED"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2880,
+        96
+      ],
+      "id": "9ef80b99-5304-40d5-bf13-c6697d2bfeac",
+      "name": "Create a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "vy5wrOp4AMZRj1kG",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "thread",
+        "operation": "trash",
+        "threadId": "={{ $('Gmail Trigger').item.json.threadId }}"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2880,
+        -288
+      ],
+      "id": "7a32971b-197d-4c9a-b0c7-8836b9e68eb9",
+      "name": "Trash a thread",
+      "webhookId": "73bfa9d4-0ffd-42f3-a085-4ff9aa4a71d0",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "0rvNSU9uoCudNpPq",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0C1920K5V3",
+          "mode": "list",
+          "cachedResultName": "malicious-emails"
+        },
+        "text": "=--- MALICIOUS EMAIL ALERT ---\nSubject: {{ $json.output.subject }}\nSender: {{ $json.output.sender }}\nRecipient: {{ $json.output.recipient }}\nRisk Score: {{ $json.output.risk_score }}/100\nVerdict: {{ $json.output.verdict }}\nRecommended Action: {{ $json.output.recommended_action }}\nReasons: • {{ $json.output.reasons.join('\\n• ') }}\nURL Assessment: • {{ $json.output.url_assessment.join('\\n• ') }} Attachment Assessment: • {{ $json.output.attachment_assessment.join('\\n• ') }}\nAction Taken: EMAIL QUARANTINED",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.7,
+      "position": [
+        3104,
+        -288
+      ],
+      "id": "c803b21f-f121-4f96-aa3f-32fae552cb67",
+      "name": "Send a message",
+      "webhookId": "bab440dc-de48-42e5-b179-06be74a9be87",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "igsLEtTH8EoPqSSr",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "project": {
+          "__rl": true,
+          "value": "10002",
+          "mode": "list",
+          "cachedResultName": "phishing-mail-notifier-n8n"
+        },
+        "issueType": {
+          "__rl": true,
+          "value": "10012",
+          "mode": "list",
+          "cachedResultName": "Task"
+        },
+        "summary": "=Malicious Email Detected - {{ $json.output.subject }}",
+        "additionalFields": {
+          "description": "=Email Details Subject: {{ $json.output.subject }}\nSender: {{ $json.output.sender }}\nRecipient: {{ $json.output.recipient }}\n\nSOC Analyst Assessment >>\nRisk Score: {{ $json.output.risk_score }}/100\nVerdict: {{ $json.output.verdict }}\nRecommended Action: {{ $json.output.recommended_action }}\nReasons {{ $json.output.reasons.join('\\n') }}\nURL Assessment {{ $json.output.url_assessment.join('\\n') }}\nAttachment Assessment {{ $json.output.attachment_assessment.join('\\n') }}\nAutomated Response Email quarantined by TriageForge."
+        }
+      },
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [
+        3328,
+        -288
+      ],
+      "id": "686d7d5c-c15a-49a5-892b-f448c63bd25c",
+      "name": "Create an issue",
+      "credentials": {
+        "jiraSoftwareCloudApi": {
+          "id": "QMHMXZlQQrzKWWDg",
+          "name": "Jira SW Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableId": "security_events",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "email_message_id",
+              "fieldValue": "={{ $('Gmail Trigger').item.json.id }}"
+            },
+            {
+              "fieldId": "created_at",
+              "fieldValue": "={{ $now.toISO() }}"
+            },
+            {
+              "fieldId": "subject",
+              "fieldValue": "={{ $('Merge1').item.json.output.subject }}"
+            },
+            {
+              "fieldId": "sender",
+              "fieldValue": "={{ $('Merge1').item.json.output.sender }}"
+            },
+            {
+              "fieldId": "recipient",
+              "fieldValue": "={{ $('Merge1').item.json.output.recipient }}"
+            },
+            {
+              "fieldId": "email_body",
+              "fieldValue": "={{ $('Merge1').item.json.output.body }}"
+            },
+            {
+              "fieldId": "risk_score",
+              "fieldValue": "={{ $('AI Agent1').item.json.output.risk_score }}"
+            },
+            {
+              "fieldId": "verdict",
+              "fieldValue": "={{ $('AI Agent1').item.json.output.verdict }}"
+            },
+            {
+              "fieldId": "recommended_action",
+              "fieldValue": "={{ $('AI Agent1').item.json.output.recommended_action }}"
+            },
+            {
+              "fieldId": "reasons",
+              "fieldValue": "={{ $('AI Agent1').item.json.output.reasons }}"
+            },
+            {
+              "fieldId": "url_assessments",
+              "fieldValue": "={{ $('AI Agent1').item.json.output.url_assessment }}"
+            },
+            {
+              "fieldId": "attachment_assessments",
+              "fieldValue": "={{ $('AI Agent1').item.json.output.attachment_assessment }}"
+            },
+            {
+              "fieldId": "action_taken",
+              "fieldValue": "QUARANTINED"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        3552,
+        -288
+      ],
+      "id": "1f7ae7ef-0740-436c-8c38-c945a7b5afd0",
+      "name": "Create a row1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "vy5wrOp4AMZRj1kG",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0C1HAK47U4",
+          "mode": "list",
+          "cachedResultName": "suspicious-email"
+        },
+        "text": "=⚠️ TriageForge Suspicious Email Alert - Suspicious email detected.\nSubject: {{ $json.output.subject }}\nSender: {{ $json.output.sender }}\nRisk Score: {{ $json.output.risk_score }}/100\nVerdict: {{ $json.output.verdict }}\nRecommended Action: {{ $json.output.recommended_action }}\nReasons: {{ $json.output.reasons.join('\\n') }}\nURL Assessment: {{ $json.output.url_assessment.join('\\n') }}\nAttachment Assessment: {{ $json.output.attachment_assessment.join('\\n') }}\nAction Taken: Analyst alert generated.",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.7,
+      "position": [
+        2880,
+        -96
+      ],
+      "id": "762a1310-529e-4ee0-bbf2-7f9d9f3e04b6",
+      "name": "Send a message1",
+      "webhookId": "25d7dbd7-b1d1-47d1-be09-d06bcce43d65",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "igsLEtTH8EoPqSSr",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableId": "security_events",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "email_message_id",
+              "fieldValue": "={{ $('Gmail Trigger').item.json.id }}"
+            },
+            {
+              "fieldId": "created_at",
+              "fieldValue": "={{ $now.toISO() }}"
+            },
+            {
+              "fieldId": "subject",
+              "fieldValue": "={{ $('Merge1').item.json.output.subject }}"
+            },
+            {
+              "fieldId": "sender",
+              "fieldValue": "={{ $('Merge1').item.json.output.sender }}"
+            },
+            {
+              "fieldId": "recipient",
+              "fieldValue": "={{ $('Merge1').item.json.output.recipient }}"
+            },
+            {
+              "fieldId": "email_body",
+              "fieldValue": "={{ $('Merge1').item.json.output.body }}"
+            },
+            {
+              "fieldId": "risk_score",
+              "fieldValue": "={{ $('AI Agent1').item.json.output.risk_score }}"
+            },
+            {
+              "fieldId": "verdict",
+              "fieldValue": "={{ $('AI Agent1').item.json.output.verdict }}"
+            },
+            {
+              "fieldId": "recommended_action",
+              "fieldValue": "={{ $('AI Agent1').item.json.output.recommended_action }}"
+            },
+            {
+              "fieldId": "reasons",
+              "fieldValue": "={{ $('AI Agent1').item.json.output.reasons }}"
+            },
+            {
+              "fieldId": "url_assessments",
+              "fieldValue": "={{ $('AI Agent1').item.json.output.url_assessment }}"
+            },
+            {
+              "fieldId": "attachment_assessments",
+              "fieldValue": "={{ $('AI Agent1').item.json.output.attachment_assessment }}"
+            },
+            {
+              "fieldId": "action_taken",
+              "fieldValue": "ALERTED_AND_TICKET_CREATED"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        3104,
+        -96
+      ],
+      "id": "af094ffc-4846-45b9-816a-74790ebab436",
+      "name": "Create a row2",
+      "credentials": {
+        "supabaseApi": {
+          "id": "vy5wrOp4AMZRj1kG",
+          "name": "Supabase account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "AI Agent1": [
+      {
+        "json": {
+          "output": {
+            "risk_score": 10,
+            "verdict": "CLEAN",
+            "recommended_action": "ALLOW",
+            "reasons": [
+              "The email explicitly states it is a 'phishing detection automation test', indicating non-malicious intent.",
+              "All URLs in the email (example.com, google.com) are well-known, safe domains with zero malicious detections on VirusTotal.",
+              "The sender and recipient addresses are highly similar, suggesting a controlled test environment or developer testing.",
+              "No deceptive content, credential harvesting, or urgent calls to action are present."
+            ],
+            "url_assessment": [
+              "https://example.com: CLEAN (0/90 detections)",
+              "https://www.google.com: CLEAN (0/90 detections)"
+            ],
+            "attachment_assessment": [
+              "No attachments were included in the email metadata. Provided file analysis results for background files showed 0 detections."
+            ]
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Microsoft Outlook Trigger": {
+      "main": [
+        []
+      ]
+    },
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Get a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a message": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "VirusTotal HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "VirusTotal HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "VirusTotal — URL Reputation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "VirusTotal — URL Reputation": {
+      "main": [
+        [
+          {
+            "node": "VirusTotal — URL Analysis Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "VirusTotal — URL Analysis Result": {
+      "main": [
+        [
+          {
+            "node": "Aggregate URL Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "VirusTotal — File Analysis Result": {
+      "main": [
+        [
+          {
+            "node": "VirusTotal — File Analysis Result1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "VirusTotal — File Analysis Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "VirusTotal — File Analysis Result1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate URL Results": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Trash a thread",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trash a thread": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Create an issue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create an issue": {
+      "main": [
+        [
+          {
+            "node": "Create a row1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message1": {
+      "main": [
+        [
+          {
+            "node": "Create a row2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "63f43885-7e85-4282-bd33-920f9a96536a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "02b03f8f6708cf55aa8fe4e653101fef430e51a92ffa068f003a779f3f60d548"
+  },
+  "nodeGroups": [],
+  "id": "sTDb2IlHXvv6vsbq",
+  "tags": []
+}
