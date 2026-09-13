@@ -1,0 +1,13 @@
+return items.map(item => {
+  const binaryKey = Object.keys(item.binary || {})[0];
+
+  if (!binaryKey) {
+    throw new Error('No binary attachment found');
+  }
+
+  item.binary = {
+    attachment: item.binary[binaryKey]
+  };
+
+  return item;
+});

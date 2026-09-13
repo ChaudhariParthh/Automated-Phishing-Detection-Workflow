@@ -1,0 +1,60 @@
+//1 AI Agent Output Parser Code
+
+
+
+{
+  "subject": "string",
+  "sender": "string",
+  "recipient": "string",
+  "body": "string",
+  "urls": ["string"],
+  "attachment_names": ["string"],
+  "suspicious_indicators": ["string"]
+}
+
+
+
+// 2] AI Agent Output Parser Code
+
+{
+  "type": "object",
+  "properties": {
+    "risk_score": {
+      "type": "number"
+    },
+    "verdict": {
+      "type": "string",
+      "enum": ["MALICIOUS", "SUSPICIOUS", "CLEAN"]
+    },
+    "recommended_action": {
+      "type": "string",
+      "enum": ["QUARANTINE", "ALERT", "ALLOW"]
+    },
+    "reasons": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "url_assessment": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "attachment_assessment": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "risk_score",
+    "verdict",
+    "recommended_action",
+    "reasons",
+    "url_assessment",
+    "attachment_assessment"
+  ]
+}
