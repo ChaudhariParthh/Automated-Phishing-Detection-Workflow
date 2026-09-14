@@ -258,7 +258,7 @@
           "parameters": [
             {
               "name": "X-Apikey",
-              "value": "3fc52788771fc2ab8ee3bb3910570f754714001202731ab1fdcc59599cf8dfc9"
+              "value": "REDACTED_API_KEY"
             }
           ]
         },
@@ -297,7 +297,7 @@
           "parameters": [
             {
               "name": "X-Apikey",
-              "value": "3fc52788771fc2ab8ee3bb3910570f754714001202731ab1fdcc59599cf8dfc9"
+              "value": "REDACTED_API_KEY"
             }
           ]
         },
@@ -330,7 +330,7 @@
           "parameters": [
             {
               "name": "X-Apikey",
-              "value": "3fc52788771fc2ab8ee3bb3910570f754714001202731ab1fdcc59599cf8dfc9"
+              "value": "REDACTED_API_KEY"
             }
           ]
         },
@@ -941,7 +941,7 @@
           "parameters": [
             {
               "name": "X-Apikey",
-              "value": "3fc52788771fc2ab8ee3bb3910570f754714001202731ab1fdcc59599cf8dfc9"
+              "value": "REDACTED_API_KEY"
             }
           ]
         },
