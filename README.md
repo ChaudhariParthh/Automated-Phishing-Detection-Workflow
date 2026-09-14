@@ -2,6 +2,9 @@
 
 An enterprise-grade automated phishing detection and response system powered by AI and threat intelligence. This workflow uses n8n orchestration with Google Gemini AI agents and VirusTotal analysis to detect, classify, and respond to phishing emails in real-time.
 
+
+<img width="1536" height="1024" alt="architecture" src="https://github.com/user-attachments/assets/61b97134-b45d-4a12-8146-fa4da87225f5" />
+
 ---
 
 ## Table of Contents
